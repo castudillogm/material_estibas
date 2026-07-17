@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Sistema de Gestión de Stock de Material de Estiba para GrupaMar. Herramienta para visualizar stock actual y calcular el stock de seguridad basado en el histórico de consumo por delegación." />
+  <title>GrupaMar - Stock Material de Estiba</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  
+  <!-- Pantalla de Login -->
+  <div id="login-screen" class="login-container">
+    <div class="login-box card">
+      <img src="/logo.png" alt="Logo GrupaMar" class="logo-img" style="margin-bottom: 20px;" />
+      <h2>Acceso Restringido</h2>
+      <p>Por favor, ingresa el código de seguridad para acceder al sistema.</p>
+      <input type="password" id="security-code" placeholder="Código de 6 caracteres" maxlength="6" />
+      <p id="login-error" class="error-msg hidden">Código incorrecto.</p>
+      <button id="btn-login" class="btn btn-primary" style="width: 100%; margin-top: 15px;">Ingresar</button>
+    </div>
+  </div>
+
+  <!-- Contenido Principal de la App (Oculto al inicio) -->
+  <div id="app-content" class="hidden">
+    <header class="header">
+      <div class="logo-container">
+        <img src="/logo.png" alt="Logo GrupaMar" class="logo-img" />
+      </div>
+    </header>
+
+    <main class="container">
+      <h1>Gestión de Material de Estiba</h1>
+
+    <section id="config-section" class="config-section card">
+      <h2>Configuración de Datos</h2>
+      <p>Introduce las URLs CSV publicadas desde Google Sheets.</p>
+      <div class="input-group">
+        <label for="url-stock">URL CSV - Stock Actual:</label>
+        <input type="text" id="url-stock" placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?gid=...&single=true&output=csv">
+      </div>
+      <div class="input-group">
+        <label for="url-consumo">URL CSV - Consumo (No recuperables):</label>
+        <input type="text" id="url-consumo" placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?gid=...&single=true&output=csv">
+      </div>
+      <button id="btn-load" class="btn btn-primary">Cargar Datos</button>
+    </section>
+
+    <div id="dashboard" class="hidden">
+      <section class="filters card" style="display: flex; justify-content: space-between; align-items: flex-end;">
+        <div style="display: flex; gap: 30px; flex-wrap: wrap;">
+          <div class="filter-group">
+            <label for="delegacion-select">Delegación:</label>
+            <select id="delegacion-select">
+              <option value="">Selecciona una delegación...</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="lead-time">Lead Time (Días para reponer):</label>
+            <input type="number" id="lead-time" min="1" value="2" step="1">
+          </div>
+        </div>
+        <button id="btn-edit-config" class="btn btn-primary" style="margin-bottom: 20px;">Cambiar URLs</button>
+      </section>
+
+      <section class="results">
+        <div class="card">
+          <h2>Stock Actual</h2>
+          <div class="table-responsive">
+            <table id="table-stock">
+              <thead>
+                <tr>
+                  <th>Tipo Material</th>
+                  <th>Stock Actual (Unidades)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Contenido generado dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Análisis y Stock de Seguridad</h2>
+          <div class="table-responsive">
+            <table id="table-seguridad">
+              <thead>
+                <tr>
+                  <th>Tipo Material</th>
+                  <th>Consumo Diario</th>
+                  <th>Stock Seguridad</th>
+                  <th>Estado (Actual)</th>
+                  <th>MOQ (Ingresar)</th>
+                  <th>Pedir cada...</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Contenido generado dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+    
+    <div id="loader" class="loader-container hidden">
+      <div class="spinner"></div>
+      <p>Cargando datos...</p>
+    </div>
+    </main>
+  </div>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

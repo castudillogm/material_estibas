@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe de Proyecto: Cálculo de Stock de Seguridad</title>
+    <style>
+        :root {
+            --color-azul-oscuro: #091197;
+            --color-azul-claro: #03A9EC;
+            --color-blanco: #FFFFFF;
+            --color-gris-claro: #F6F6F6;
+            --font-family: "Arial Nova", Arial, sans-serif;
+            --border-radius: 20px;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--color-gris-claro);
+            color: #333;
+            line-height: 1.8;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--color-blanco);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--color-gris-claro);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1, h2, h3 {
+            color: var(--color-azul-oscuro);
+        }
+
+        .formula-box {
+            background-color: #f0f8ff;
+            border-left: 5px solid var(--color-azul-claro);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+            font-size: 1.1em;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #fafafa;
+            border-radius: 15px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .step-number {
+            background-color: var(--color-azul-oscuro);
+            color: white;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+
+        .code-block {
+            background-color: #282c34;
+            color: #abb2bf;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: monospace;
+            overflow-x: auto;
+        }
+
+        .interactive-demo {
+            margin-top: 40px;
+            padding: 30px;
+            background-color: var(--color-azul-oscuro);
+            color: white;
+            border-radius: var(--border-radius);
+            text-align: center;
+        }
+
+        .interactive-demo input {
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            margin: 5px;
+            font-family: var(--font-family);
+        }
+
+        .interactive-demo button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            background-color: var(--color-azul-claro);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        #demo-result {
+            margin-top: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #fff;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Informe Técnico: Sistema de Gestión de Estibas</h1>
+        <p style="color: var(--color-azul-claro); font-style: italic;">GrupaMar - Logística y Transporte</p>
+    </header>
+
+    <h2>1. Resumen del Proyecto</h2>
+    <p>
+        El proyecto consiste en una aplicación web interactiva desarrollada en JavaScript puro (Vanilla JS) y empaquetada con Vite. 
+        Su objetivo es conectarse de forma dinámica a hojas de cálculo de Google Sheets exportadas como CSV para gestionar el 
+        <strong>Stock Actual</strong> y cruzarlo con el <strong>Histórico de Consumos</strong>, automatizando así la toma de decisiones 
+        sobre reposiciones de material por delegación.
+    </p>
+
+    <h2>2. Metodología de Cálculo del Stock de Seguridad</h2>
+    <p>
+        Para garantizar un flujo dinámico que se adapte automáticamente al comportamiento de cada delegación sin necesidad 
+        de introducir fórmulas complejas manualmente, el sistema calcula el <strong>Stock de Seguridad</strong> utilizando un modelo basado en el <em>Lead Time</em> (Tiempo de entrega en días) y el consumo histórico promedio.
+    </p>
+
+    <div class="formula-box">
+        <strong>Fórmula Principal:</strong><br><br>
+        <span style="font-family: monospace; font-size: 1.2em;">Stock de Seguridad = Consumo Medio Diario × Lead Time</span>
+    </div>
+
+    <h3>Paso a Paso del Algoritmo Interno:</h3>
+
+    <div class="step">
+        <div class="step-number">1</div>
+        <div>
+            <strong>Agrupación del Histórico:</strong><br>
+            El sistema lee la pestaña de <em>"Materiales No recuperables"</em> y filtra todas las filas correspondientes a la <strong>Delegación Seleccionada</strong>. Suma todas las cantidades de la columna <em>"Cantidad (Unidades)"</em> agrupándolas por <em>"Tipo Material"</em> para obtener el <strong>Consumo Total</strong>.
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-number">2</div>
+        <div>
+            <strong>Determinación de Días Operativos (Historial Real):</strong><br>
+            El sistema revisa todas las filas del archivo de esa delegación y cuenta cuántos <strong>días únicos distintos (fechas)</strong> tienen un registro de consumo. 
+            En lugar de calcular el tiempo transcurrido en el calendario, solo se toman en cuenta los días en los que efectivamente se anotó algún consumo en el Excel. 
+            <em>(Esto evita que si hay meses sin datos registrados, el promedio diario caiga irremediablemente, haciéndolo mucho más realista).</em>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-number">3</div>
+        <div>
+            <strong>Cálculo del Consumo Medio Diario:</strong><br>
+            Se divide el <strong>Consumo Total</strong> (Paso 1) entre los <strong>Días del Periodo</strong> (Paso 2). Esto nos da una tasa diaria de gasto de material, incluso si no se gasta todos los días.
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-number">4</div>
+        <div>
+            <strong>Proyección del Stock de Seguridad:</strong><br>
+            Se multiplica el <em>Consumo Medio Diario</em> por el <em>Lead Time</em> (los días que tarda en llegar el material, configurables en la pantalla). Finalmente, el resultado se somete a un <strong>redondeo hacia arriba (Math.ceil)</strong> para mostrar valores discretos (ej. si el cálculo da 0.05, el sistema sugiere tener al menos 1 unidad de seguridad).
+        </div>
+    </div>
+
+    <h2>3. Lógica de Alertas de Reposición</h2>
+    <p>Una vez calculado el Stock de Seguridad, el sistema lo compara contra el <em>Stock Actual</em> (extraído de la primera pestaña del CSV) y clasifica la situación en tres estados de urgencia:</p>
+    <ul>
+        <li><strong style="color: #28a745;">Óptimo:</strong> El Stock Actual cuenta con suficiente margen por encima del colchón de seguridad.</li>
+        <li><strong style="color: #F75600;">Alerta:</strong> El Stock Actual es mayor al Stock de Seguridad, pero te queda menos de "un Lead Time extra" de colchón (es decir, estás en la ventana donde un pequeño pico de consumo podría llevarte a romper stock).</li>
+        <li><strong style="color: #dc3545;">Solicitar de Inmediato:</strong> El Stock Actual es <strong>menor o igual</strong> al Stock de Seguridad. Al llegar al límite exacto, el tiempo de entrega (Lead Time) exige realizar el pedido de reposición ya mismo para evitar quedarte sin material.</li>
+    </ul>
+
+    <div class="interactive-demo">
+        <h3>Simulador Dinámico de la Fórmula</h3>
+        <p>Prueba tú mismo cómo reacciona el sistema cambiando estos valores:</p>
+        
+        <input type="number" id="demo-consumo-total" placeholder="Consumo Total (Unidades)" value="150" title="Consumo Total Histórico">
+        <input type="number" id="demo-dias" placeholder="Días de Historial" value="30" title="Días que abarca el historial">
+        <input type="number" id="demo-lead" placeholder="Lead Time (Días)" value="3" title="Días que tarda el proveedor">
+        <br>
+        <button onclick="calcularDemo()">Calcular Stock de Seguridad</button>
+
+        <div id="demo-result">
+            Stock de Seguridad: <span style="color: var(--color-azul-claro);">15</span> unidades
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function calcularDemo() {
+        const consumoTotal = parseFloat(document.getElementById('demo-consumo-total').value) || 0;
+        const dias = parseInt(document.getElementById('demo-dias').value) || 1;
+        const lead = parseInt(document.getElementById('demo-lead').value) || 0;
+
+        const consumoDiario = consumoTotal / dias;
+        const stockSeguridad = Math.ceil(consumoDiario * lead);
+
+        const resultDiv = document.getElementById('demo-result');
+        resultDiv.innerHTML = `Consumo Medio Diario: ${(consumoDiario).toFixed(2)} unidades<br>
+                               Stock de Seguridad: <span style="color: var(--color-azul-claro);">${stockSeguridad}</span> unidades redondeadas`;
+    }
+</script>
+
+</body>
+</html>
